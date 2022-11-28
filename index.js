@@ -67,11 +67,19 @@ async function run() {
             const category = await categoryes.find(query).toArray()
             res.send(category)
         })
+
         app.get('/seller', async (req, res) => {
             const query = { role: "seller" }
             const category = await usersCollection.find(query).toArray()
             res.send(category)
         })
+
+        app.get('/buyer', async (req, res) => {
+            const query = { role: "buyer" }
+            const category = await usersCollection.find(query).toArray()
+            res.send(category)
+        })
+
         app.get('/products', async (req, res) => {
             const query = {}
             const category = await categoryes.find(query).toArray()
