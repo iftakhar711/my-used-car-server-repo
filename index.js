@@ -20,6 +20,7 @@ async function run() {
         const usersCollection = client.db('used-products').collection('pro-users')
         const productsCollection = client.db('used-products').collection('products')
         const categoryes = client.db('used-products').collection('categorys')
+        const bookingsCollection = client.db('used-products').collection('bookings')
 
 
         app.put('/users', async (req, res) => {
@@ -53,19 +54,27 @@ async function run() {
             const result = await productsCollection.insertOne(query);
             res.send(result);
         });
+
         app.get('/products/:category', async (req, res) => {
             const category = req.params.category;
-            console.log(category);
             const query = { category: category };
             const product = await productsCollection.find(query).toArray();
-            console.log(product);
             res.send(product)
         })
+
         app.get('/products', async (req, res) => {
             const query = {}
             const category = await categoryes.find(query).toArray()
             res.send(category)
         })
+
+        app.post('/bookings', async (req, res) => {
+            const booking = req.body;
+            console.log(booking);
+            const query = {}
+            const result = await bookingsCollection.insertOne(booking);
+            res.send(result);
+        });
 
     }
     finally {
