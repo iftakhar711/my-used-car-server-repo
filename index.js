@@ -3,16 +3,15 @@ const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port = process.env.PORT || 5000
+require('dotenv').config();
 
 // middlewares
 app.use(cors())
 app.use(express.json())
 
 
-//Ag82tXVCFl4hWEut
 
-
-const uri = "mongodb+srv://usedseller:xQZHlD2v7seMbcnl@cluster0.p41fucv.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.p41fucv.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run() {
@@ -99,11 +98,11 @@ async function run() {
             const result = await bookingsCollection.find(query).toArray()
             res.send(result);
         });
-        app.get('/users/admin/:email', async (req, res) => {
+        app.get('/users/:seller', async (req, res) => {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
-            res.send({ isAdmin: user?.admin === 'admin' });
+            res.send({ isAdmin: user?.role === 'seller' });
         })
 
         app.put('/users/admin/:id', async (req, res) => {
@@ -118,6 +117,14 @@ async function run() {
             const result = await usersCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         });
+
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.admin === 'admin' });
+        })
+
         app.delete('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
