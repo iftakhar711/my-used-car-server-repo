@@ -21,22 +21,20 @@ async function run() {
         const productsCollection = client.db('used-products').collection('products')
         const categoryes = client.db('used-products').collection('categorys')
 
-        // Save user email
-        app.put('/user/:email', async (req, res) => {
-            const email = req.params.email
-            const user = req.body
-            console.log(email);
-            const filter = {
-                email: email,
 
-            }
+        app.put('/users', async (req, res) => {
+            const user = req.body
+            console.log(user);
+            const filter = { email: user.email }
             const options = { upsert: true }
             const updateDoc = {
                 $set: user,
             }
             const result = await usersCollection.updateOne(filter, updateDoc, options)
+            console.log(result)
             res.send(result)
         })
+
 
         app.post('/products', async (req, res) => {
             const product = req.body;
