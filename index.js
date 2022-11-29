@@ -93,16 +93,19 @@ async function run() {
             res.send(result);
         });
 
-        app.get('/bookings', async (req, res) => {
-            const query = {}
+        app.get('/bookings/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email }
+            console.log(query);
             const result = await bookingsCollection.find(query).toArray()
             res.send(result);
         });
-        app.get('/users/:seller', async (req, res) => {
+        app.get('/seller/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email }
+            console.log(query);
             const user = await usersCollection.findOne(query);
-            res.send({ isAdmin: user?.role === 'seller' });
+            res.send({ isSeller: user?.role === 'seller' });
         })
 
         app.put('/users/admin/:id', async (req, res) => {
@@ -125,7 +128,7 @@ async function run() {
             res.send({ isAdmin: user?.admin === 'admin' });
         })
 
-        app.delete('/users/admin/:id', async (req, res) => {
+        app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const result = await usersCollection.deleteOne(filter);
