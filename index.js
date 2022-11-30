@@ -87,7 +87,6 @@ async function run() {
 
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
-            console.log(booking);
             const query = {}
             const result = await bookingsCollection.insertOne(booking);
             res.send(result);
@@ -96,16 +95,20 @@ async function run() {
         app.get('/bookings/:email', async (req, res) => {
             const email = req.params.email
             const query = { email }
-            console.log(query);
             const result = await bookingsCollection.find(query).toArray()
             res.send(result);
         });
         app.get('/seller/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email }
-            console.log(query);
             const user = await usersCollection.findOne(query);
             res.send({ isSeller: user?.role === 'seller' });
+        })
+        app.get('/buyer/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isBuyer: user?.role === 'buyer' });
         })
 
         app.put('/users/admin/:id', async (req, res) => {
@@ -114,7 +117,7 @@ async function run() {
             const options = { upsert: true };
             const updatedDoc = {
                 $set: {
-                    admin: 'admin'
+                    role: 'admin'
                 }
             }
             const result = await usersCollection.updateOne(filter, updatedDoc, options);
@@ -125,7 +128,7 @@ async function run() {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
-            res.send({ isAdmin: user?.admin === 'admin' });
+            res.send({ isAdmin: user?.role === 'admin' });
         })
 
         app.delete('/users/:id', async (req, res) => {
